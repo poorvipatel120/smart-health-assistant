@@ -1,0 +1,70 @@
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+
+    result = ""
+    recommendation = ""
+    reminder = ""
+    status = ""
+    if request.method == 'POST':
+
+        systolic = int(request.form['systolic'])
+        diastolic = int(request.form['diastolic'])
+        sugar = int(request.form['sugar'])
+
+        medicine_name = request.form['medicine_name']
+        medicine_time = request.form['medicine_time']
+
+        # BP Analysis
+        if systolic > 140 or diastolic > 90:
+            result += "⚠️ High Blood Pressure Detected\n"
+
+        elif systolic < 90 or diastolic < 60:
+            result += "⚠️ Low Blood Pressure Detected\n"
+
+        else:
+            result += "✅ Blood Pressure Normal\n"
+
+        # Sugar Analysis
+        if sugar > 200:
+            result += "⚠️ Sugar Level Very High\n"
+
+        elif sugar > 140:
+            result += "⚠️ Prediabetes Risk\n"
+
+        else:
+            result += "✅ Sugar Level Normal\n"
+        # Health Status
+
+        if systolic > 160 or diastolic > 100 or sugar > 250:
+           status = "🔴 High Risk"
+
+        elif systolic > 140 or diastolic > 90 or sugar > 140:
+             status = "🟡 Moderate Risk"
+
+        else:
+              status = "🟢 Stable"
+        # Recommendations
+        recommendation = """
+• Drink enough water
+• Take medicines on time
+• Avoid excess sugar and salt
+• Exercise regularly
+"""
+
+        # Medicine Reminder
+        reminder = f"💊 Reminder: Take {medicine_name} at {medicine_time}"
+
+    return render_template(
+        'index.html',
+        result=result,
+        recommendation=recommendation,
+        reminder=reminder,
+        status=status
+    )
+
+if __name__ == '__main__':
+    app.run(debug=True)
