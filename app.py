@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request, session ,redirect, url_for
-
+from flask import Flask, render_template, request, session, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = "health_tracker"
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def home():
 
     result = ""
@@ -14,26 +13,37 @@ def home():
     status = ""
 
     health_score = 100
+
     bmi = 0
     bmi_category = ""
+
     ai_tip = ""
 
-    if 'records' not in session:
-        session['records'] = []
+    if "records" not in session:
+        session["records"] = []
 
-    if request.method == 'POST':
-        date = request.form.get('date', 'No Date')
-        systolic = int(request.form['systolic'])
-        diastolic = int(request.form['diastolic'])
-        sugar = int(request.form['sugar'])
+    if request.method == "POST":
 
-        height = float(request.form['height'])
-        weight = float(request.form['weight'])
+        # ---------------- PATIENT DETAILS ----------------
 
-        medicine_name = request.form['medicine_name']
-        medicine_time = request.form['medicine_time']
+        name = request.form["name"]
 
-        # ---------------- BLOOD PRESSURE ANALYSIS ----------------
+        date = request.form["date"]
+
+        systolic = int(request.form["systolic"])
+
+        diastolic = int(request.form["diastolic"])
+
+        sugar = int(request.form["sugar"])
+
+        height = float(request.form["height"])
+
+        weight = float(request.form["weight"])
+
+        medicine_name = request.form["medicine_name"]
+
+        bp_flag = "normal"
+                # ---------------- BLOOD PRESSURE ANALYSIS ----------------
 
         if systolic > 140 or diastolic > 90:
             result += "⚠️ High Blood Pressure Detected\n"
@@ -52,9 +62,8 @@ def home():
 
         else:
             result += "✅ Blood Pressure Normal\n"
-            bp_flag = "normal"
 
-        # ---------------- SUGAR ANALYSIS ----------------
+        # ---------------- BLOOD SUGAR ANALYSIS ----------------
 
         if sugar > 200:
             result += "⚠️ Sugar Level Very High\n"
@@ -67,41 +76,38 @@ def home():
         else:
             result += "✅ Sugar Level Normal\n"
 
-        # ---------------- STATUS ----------------
+        # ---------------- HEALTH STATUS ----------------
 
-        if bp_flag == "critical":
+        if bp_flag == "critical" or sugar > 200:
             status = "red"
 
-        elif bp_flag == "high":
-            status = "orange"
-
-        elif sugar > 200:
-            status = "red"
-
-        elif sugar > 140 or bp_flag == "low":
+        elif bp_flag == "high" or bp_flag == "low" or sugar > 140:
             status = "orange"
 
         else:
             status = "green"
 
-        # ---------------- BMI ----------------
+        # ---------------- BMI CALCULATION ----------------
 
-        height_in_meter = height / 100
-        bmi = weight / (height_in_meter * height_in_meter)
+        height_meter = height / 100
+
+        bmi = weight / (height_meter * height_meter)
 
         if bmi < 18.5:
             bmi_category = "⚠️ Underweight"
+
         elif bmi < 25:
             bmi_category = "✅ Healthy"
+
         elif bmi < 30:
             bmi_category = "⚠️ Overweight"
+            health_score -= 10
+
         else:
             bmi_category = "🔴 Obese"
+            health_score -= 20
 
-        if bmi > 25:
-            health_score -= 15
-
-        # ---------------- AI TIPS ----------------
+        # ---------------- AI SUGGESTIONS ----------------
 
         if sugar > 140:
             ai_tip += "🍭 Avoid sweets today.\n"
@@ -110,71 +116,89 @@ def home():
             ai_tip += "🧂 Reduce salty foods.\n"
 
         if systolic < 90:
-            ai_tip += "💧 Increase hydration.\n"
+            ai_tip += "💧 Drink more water.\n"
 
         if bmi > 25:
-            ai_tip += "🏃 Exercise daily.\n"
+            ai_tip += "🏃 Exercise for at least 30 minutes daily.\n"
 
         if ai_tip == "":
-            ai_tip = "✅ Keep maintaining a healthy lifestyle."
-
-        # ---------------- STORE RECORD ----------------
-
-        records = session['records']
-
-        records.append({
-            "date": date,
-            "systolic": systolic,
-            "diastolic": diastolic,
-            "sugar": sugar,
-            "bmi": round(bmi, 1),
-            "status": status,
-            "medicine_name": medicine_name,
-            "medicine_time": medicine_time
-        })
-
-        session['records'] = records
-
-        # ---------------- RECOMMENDATION ----------------
+            ai_tip = "✅ Keep maintaining your healthy lifestyle."
+                    # ---------------- RECOMMENDATIONS ----------------
 
         recommendation = """
 • Drink enough water
 • Exercise regularly
 • Avoid excess sugar and salt
-• Sleep properly
-• Take medicines on time
+• Eat healthy food
+• Sleep for at least 7-8 hours
+• Take medicines regularly
 """
 
-        # ---------------- REMINDER ----------------
+        # ---------------- MEDICINE REMINDER ----------------
 
-        reminder = f"💊 Take {medicine_name} at {medicine_time}"
+        reminder = f"💊 Medicine: {medicine_name}"
+
+        # ---------------- SAVE RECORD ----------------
+
+        records = session["records"]
+
+        records.append({
+
+            "name": name,
+
+            "date": date,
+
+            "systolic": systolic,
+
+            "diastolic": diastolic,
+
+            "sugar": sugar,
+
+            "bmi": round(bmi, 1),
+
+            "status": status,
+
+            "medicine_name": medicine_name
+
+        })
+
+        session["records"] = records
 
     return render_template(
-        'index.html',
-        result=result,
-        recommendation=recommendation,
-        reminder=reminder,
-        status=status,
-        bmi=round(bmi, 1),
-        bmi_category=bmi_category,
-        health_score=health_score,
-        ai_tip=ai_tip,
-        records=session.get('records', [])
-    )
 
-@app.route('/delete/<int:index>')
+        "index.html",
+
+        result=result,
+
+        recommendation=recommendation,
+
+        reminder=reminder,
+
+        status=status,
+
+        bmi=round(bmi, 1),
+
+        bmi_category=bmi_category,
+
+        health_score=health_score,
+
+        ai_tip=ai_tip,
+
+        records=session.get("records", [])
+
+    )
+    @app.route("/delete/<int:index>")
 def delete(index):
 
-    records = session.get('records', [])
+    records = session.get("records", [])
 
     if 0 <= index < len(records):
         records.pop(index)
 
-    session['records'] = records
+    session["records"] = records
 
-    return redirect(url_for('home'))
-import os
+    return redirect(url_for("home"))
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5002))
-    app.run(host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5002, debug=True)
