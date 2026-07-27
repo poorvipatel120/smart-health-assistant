@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Smart Health Assistant</title>
 
@@ -14,7 +18,7 @@
 
 <div class="main-container">
 
-    <!-- LEFT SIDE -->
+    <!-- ================= LEFT PANEL ================= -->
 
     <div class="left-panel">
 
@@ -28,77 +32,114 @@
 
         </div>
 
-        <!-- FORM -->
+        <!-- ================= INPUT FORM ================= -->
 
         <div class="glass-card">
 
             <form method="POST">
 
-                <label>Date:</label>
-                <input type="date" 
-                       name="date" required>
+                <label>👤 Patient Name</label>
 
-                <input type="number"
-                       name="systolic"
-                       placeholder="Systolic BP"
-                       required>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Patient Name"
+                    required>
 
-                <input type="number"
-                       name="diastolic"
-                       placeholder="Diastolic BP"
-                       required>
+                <label>📅 Date</label>
 
-                <input type="number"
-                       name="sugar"
-                       placeholder="Sugar Level"
-                       required>
-               <input type="number"
-                       name="height"
-                       placeholder="Height (cm)"
-                       required>
+                <input
+                    type="date"
+                    name="date"
+                    required>
 
-                <input type="number"
-                       name="weight"
-                       placeholder="Weight (kg)"
-                       required>
-                <input type="text"
-                       name="medicine_name"
-                       placeholder="Medicine Name"
-                       required>
+                <label>🩸 Systolic Blood Pressure</label>
 
-                <input type="time"
-                       name="medicine_time"
-                       required>
+                <input
+                    type="number"
+                    name="systolic"
+                    placeholder="120"
+                    required>
+
+                <label>🩸 Diastolic Blood Pressure</label>
+
+                <input
+                    type="number"
+                    name="diastolic"
+                    placeholder="80"
+                    required>
+
+                <label>🍬 Sugar Level</label>
+
+                <input
+                    type="number"
+                    name="sugar"
+                    placeholder="100"
+                    required>
+
+                <label>📏 Height (cm)</label>
+
+                <input
+                    type="number"
+                    name="height"
+                    placeholder="170"
+                    required>
+
+                <label>⚖ Weight (kg)</label>
+
+                <input
+                    type="number"
+                    name="weight"
+                    placeholder="65"
+                    required>
+
+                <label>💊 Medicine Name</label>
+
+                <input
+                    type="text"
+                    name="medicine_name"
+                    placeholder="Paracetamol"
+                    required>
 
                 <button type="submit">
 
-                    Analyze Health
+                    🔍 Analyze Health
 
                 </button>
 
             </form>
 
         </div>
-
-        <!-- STATUS -->
+                <!-- ================= HEALTH STATUS ================= -->
 
         {% if status %}
 
         <div class="status-card {{ status }}">
 
-        <h2>
-           {% if status == 'red' %} 🔴 CRITICAL
-           {% elif status == 'orange' %} 🟠 WARNING
-           {% else %} 🟢 HEALTHY
-           {% endif %}
-       </h2>
+            <h2>
 
-      </div>
+                {% if status == "red" %}
 
+                    🔴 CRITICAL
+
+                {% elif status == "orange" %}
+
+                    🟠 WARNING
+
+                {% else %}
+
+                    🟢 HEALTHY
+
+                {% endif %}
+
+            </h2>
+
+        </div>
 
         {% endif %}
 
-        <!-- RESULTS -->
+
+        <!-- ================= HEALTH ANALYSIS ================= -->
 
         {% if result %}
 
@@ -111,100 +152,69 @@
         </div>
 
         {% endif %}
-     
-        <div class="glass-card">
-    <h2>📅 Health History</h2>
 
-    {% for r in records %}
-        <div style="border-bottom:1px solid gray; padding:10px;">
-            <p><b>Date:</b> {{ r.date }}</p>
-            <p><b>BP:</b> {{ r.systolic }}/{{ r.diastolic }}</p>
-            <p><b>Sugar:</b> {{ r.sugar }}</p>
-            <p><b>BMI:</b> {{ r.bmi }}</p>
-            <p><b>Status:</b> {{ r.status }}</p>
-            <p><b>Medicine:</b> {{ r.medicine_name }}</p>
-            <p><b>Time:</b> {{ r.medicine_time }}</p>
-            <a href="/delete/{{ loop.index0 }}">
-               <button style="background:red; color:white;">
-                  Delete
-               </button>
-            </a>
-</div>
-    {% endfor %}
-</div>
+
+        <!-- ================= HEALTH SUMMARY ================= -->
+
         {% if status %}
 
         <div class="glass-card">
 
-        <h2>📋 Health Summary</h2>
+            <h2>📋 Health Summary</h2>
 
-        <p><b>Status:</b> {{ status }}</p>
+            <p><b>Status:</b> {{ status }}</p>
 
-        {% if bmi %}
-        <p><b>BMI:</b> {{ bmi | round(2) }} ({{ bmi_status }})</p>
-         {% endif %}
-         <p>
-         <b>Medical Advice:</b>
-         {% if status == 'red' %}
-         🩺 Consult a doctor immediately. 
-         {% elif status == 'orange' %}
-         ⚠️ Take precautions and monitor your health.
-         {% else %}
-         ✅ No need to worry. Continue maintaining a healthy lifestyle.
-          {% endif %}
-          </p>
-</div>
+            <p><b>BMI:</b> {{ bmi }} ({{ bmi_category }})</p>
 
-{% endif %}
+            <p>
 
-        <!-- REMINDER -->
+                <b>Medical Advice:</b>
 
-        {% if reminder %}
+                {% if status == "red" %}
 
-        <div class="glass-card">
+                    🩺 Immediate medical consultation recommended.
 
-            <h2>💊 Medicine Reminder</h2>
+                {% elif status == "orange" %}
 
-            <pre>{{ reminder }}</pre>
+                    ⚠️ Monitor your health carefully and follow precautions.
+
+                {% else %}
+
+                    ✅ Your health looks good. Continue your healthy lifestyle.
+
+                {% endif %}
+
+            </p>
 
         </div>
 
         {% endif %}
 
-        <!-- RECOMMENDATIONS -->
+
+        <!-- ================= HEALTH SCORE ================= -->
+
         <div class="glass-card">
 
-    <h2>⚖️ BMI</h2>
-    <p><b>BMI Range:</b> 
-   {% if result.bmi_range == "Underweight" %}
-      ⚠️ Underweight
-   {% elif result.bmi_range == "Normal weight" %}
-      ✅ Normal
-   {% elif result.bmi_range == "Overweight" %}
-      ⚠️ Overweight
-   {% else %}
-      🔴 Obese
-   {% endif %}
-</p>
-    <pre>{{ bmi }}</pre>
+            <h2>⭐ Health Score</h2>
 
-</div>
+            <h1>{{ health_score }}/100</h1>
 
-<div class="glass-card">
+        </div>
 
-    <h2>⭐ Health Score</h2>
 
-    <pre>{{ health_score }}/100</pre>
+        <!-- ================= AI SUGGESTIONS ================= -->
 
-</div>
+        <div class="glass-card">
 
-<div class="glass-card">
+            <h2>🤖 AI Suggestions</h2>
 
-    <h2>🤖 AI Suggestions</h2>
+            <pre>{{ ai_tip }}</pre>
 
-    <pre>{{ ai_tip }}</pre>
+        </div>
 
-</div>
+
+        <!-- ================= RECOMMENDATIONS ================= -->
+
         {% if recommendation %}
 
         <div class="glass-card">
@@ -217,100 +227,261 @@
 
         {% endif %}
 
-    </div>
 
-    <!-- RIGHT SIDE -->
+        <!-- ================= MEDICINE REMINDER ================= -->
 
-    <div class="right-panel">
+        {% if reminder %}
 
-        <div class="thought-card">
+        <div class="glass-card">
 
-            <h2>💭 Daily Thoughts</h2>
+            <h2>💊 Medicine Reminder</h2>
 
-            <p>❤️ Your health is your greatest wealth.</p>
-
-            <p>💧 Drink more water daily.</p>
-
-            <p>🏃 Stay active every day.</p>
-
-            <p>🌿 Prevention is better than cure.</p>
+            <pre>{{ reminder }}</pre>
 
         </div>
 
-        <div class="thought-card">
+        {% endif %}
+        <!-- ================= HEALTH HISTORY ================= -->
 
-            <h2>📌 Healthy Habits</h2>
+<div class="glass-card">
 
-            <p>✔ Walk 30 minutes</p>
+    <h2>📅 Health History</h2>
 
-            <p>✔ Sleep 7-8 hours</p>
+    {% if records %}
 
-            <p>✔ Avoid junk food</p>
+        {% for r in records %}
 
-            <p>✔ Take medicines on time</p>
+        <div class="history">
+
+            <p><b>👤 Name:</b> {{ r.name }}</p>
+
+            <p><b>📅 Date:</b> {{ r.date }}</p>
+
+            <p><b>🩸 Blood Pressure:</b> {{ r.systolic }}/{{ r.diastolic }}</p>
+
+            <p><b>🍬 Sugar:</b> {{ r.sugar }}</p>
+
+            <p><b>⚖ BMI:</b> {{ r.bmi }}</p>
+
+            <p><b>📍 Status:</b> {{ r.status }}</p>
+
+            <p><b>💊 Medicine:</b> {{ r.medicine_name }}</p>
+
+            <a href="{{ url_for('delete', index=loop.index0) }}">
+
+                <button class="delete-btn">
+
+                    🗑 Delete
+
+                </button>
+
+            </a>
+
+            <hr>
 
         </div>
 
-        <div class="thought-card">
+        {% endfor %}
 
-            <h2>🚨 Emergency Tips</h2>
+    {% else %}
 
-            <p>⚠️ High BP → Stay calm & hydrate</p>
+        <p>No health records available.</p>
 
-            <p>⚠️ Sugar High → Avoid sweets immediately</p>
-
-            <p>⚠️ Chest Pain → Contact doctor</p>
-
-        </div>
-
-    </div>
+    {% endif %}
 
 </div>
+
+
+<!-- ================= BLOOD PRESSURE GRAPH ================= -->
+
 <div class="glass-card">
-    <h2>📊 Blood Pressure Trend</h2>
+
+    <h2>📈 Blood Pressure Trend</h2>
 
     <canvas id="bpChart"></canvas>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
+
+<!-- ================= END OF LEFT PANEL ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const records = {{ records | tojson }};
 
-    const labels = records.map(r => r.date);
+const records = {{ records|tojson }};
 
-    const systolicData = records.map(r => r.systolic);
+const labels = records.map(r => r.date);
 
-    const diastolicData = records.map(r => r.diastolic);
+const systolicData = records.map(r => r.systolic);
 
-    new Chart(document.getElementById('bpChart'), {
-        type: 'line',
+const diastolicData = records.map(r => r.diastolic);
 
-        data: {
-            labels: labels,
+const ctx = document.getElementById('bpChart');
 
-            datasets: [
-                {
-                    label: 'Systolic BP',
-                    data: systolicData,
-                    borderColor: 'red',
-                    fill: false
-                },
+if(ctx){
 
-                {
-                    label: 'Diastolic BP',
-                    data: diastolicData,
-                    borderColor: 'blue',
-                    fill: false
-                }
-            ]
-        },
+new Chart(ctx,{
 
-        options: {
-            responsive: true
-        }
-    });
+type:'line',
+
+data:{
+
+labels:labels,
+
+datasets:[
+
+{
+
+label:'Systolic',
+
+data:systolicData,
+
+borderWidth:3,
+
+fill:false
+
+},
+
+{
+
+label:'Diastolic',
+
+data:diastolicData,
+
+borderWidth:3,
+
+fill:false
+
+}
+
+]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false
+
+}
+
+});
+
+}
+
 </script>
+<!-- ================= RIGHT PANEL ================= -->
+
+<div class="right-panel">
+
+    <!-- Patient Information -->
+
+    <div class="thought-card">
+
+        <h2>👤 Patient Information</h2>
+
+        <p><b>Name:</b> {{ records[-1].name if records else "--" }}</p>
+
+        <p><b>Date:</b> {{ records[-1].date if records else "--" }}</p>
+
+        <p><b>Status:</b> {{ status if status else "--" }}</p>
+
+        <p><b>BMI:</b> {{ bmi }}</p>
+
+    </div>
+
+    <!-- Live Date & Time -->
+
+    <div class="thought-card">
+
+        <h2>🕒 Current Date & Time</h2>
+
+        <p id="clock"></p>
+
+    </div>
+
+    <!-- Health Tips -->
+
+    <div class="thought-card">
+
+        <h2>💡 Daily Health Tips</h2>
+
+        <p>💧 Drink 2–3 litres of water.</p>
+
+        <p>🥗 Eat fresh fruits & vegetables.</p>
+
+        <p>🏃 Exercise at least 30 minutes.</p>
+
+        <p>😴 Sleep 7–8 hours every night.</p>
+
+    </div>
+
+    <!-- Normal Health Range -->
+
+    <div class="thought-card">
+
+        <h2>📊 Normal Health Range</h2>
+
+        <p>🩸 BP : <b>90/60 – 120/80</b></p>
+
+        <p>🍬 Sugar : <b>70 – 99 mg/dL</b></p>
+
+        <p>⚖ BMI : <b>18.5 – 24.9</b></p>
+
+    </div>
+
+    <!-- AI Assistant -->
+
+    <div class="thought-card">
+
+        <h2>🤖 AI Assistant</h2>
+
+        <pre>{{ ai_tip }}</pre>
+
+    </div>
+
+    <!-- Emergency -->
+
+    <div class="thought-card">
+
+        <h2>🚑 Emergency Contacts</h2>
+
+        <p>🚑 Ambulance : 108</p>
+
+        <p>👮 Police : 100</p>
+
+        <p>🔥 Fire : 101</p>
+
+        <p>🏥 Hospital : 102</p>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- Live Clock -->
+
+<script>
+
+function updateClock(){
+
+const now = new Date();
+
+document.getElementById("clock").innerHTML =
+now.toLocaleDateString() + "<br>" +
+now.toLocaleTimeString();
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+</script>
+
 </body>
 
 </html>
