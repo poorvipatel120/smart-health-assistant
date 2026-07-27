@@ -201,3 +201,11 @@ input:focus {
     border-left: 3px solid #00e5ff;
     padding-left: 20px;
 }
+}
+#bpChart{
+    width:100% !important;
+    height:300px !important;
+}
+    
+
+
